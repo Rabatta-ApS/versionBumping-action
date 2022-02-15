@@ -1,0 +1,13 @@
+name: 'Chrome extension version bump'
+description: 'Update version number in manifest file '
+inputs:
+  path-to-manifest:
+    description: 'The path to the manifest file'
+    default: 'src/manifestShared.json'
+    required: true
+outputs:
+  version:
+    description: The bumped version
+runs:
+  using: 'node16'
+  main: 'index.js'

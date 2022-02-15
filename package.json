@@ -1,0 +1,24 @@
+{
+  "name": "versionbumping-action",
+  "version": "1.0.0",
+  "description": "Bumps the version of a project on PR merge",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rabatta-ApS/versionBumping-action.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Rabatta-ApS/versionBumping-action/issues"
+  },
+  "homepage": "https://github.com/Rabatta-ApS/versionBumping-action#readme",
+  "dependencies": {
+    "@actions/core": "^1.6.0",
+    "@actions/github": "^5.0.0",
+    "@octokit/action": "^3.18.0"
+  }
+}
