@@ -48,10 +48,13 @@ async function updatedManifestVersion(version){
     core.debug(label);
     if(label == "release:major"){
       versionNumbers[0]++;
+      versionNumbers[1] = 0;
+      versionNumbers[2] = 0;
+
     } 
     else if(label == "release:minor"){
       versionNumbers[1]++;
-
+      versionNumbers[2] = 0;
     }
     else if(label == "release:patch"){
       versionNumbers[2]++;
