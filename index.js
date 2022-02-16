@@ -18,7 +18,7 @@ async function main(){
 
     jsonData.version = newManifestVersion;
 
-    updateManifest(jsonData);
+    updateManifest(pathToManifest, jsonData);
   } catch (error) {
     core.error(error.message);
   }
