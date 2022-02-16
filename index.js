@@ -8,9 +8,16 @@ const path = require("path");
 async function main(){
   try {
     const pathToManifest = core.getInput('path-to-manifest', { required: true });
+    // const onlyGetVersion = core.getInput('only-get-version');
+    // const oldVersion = core.getInput('old-verison');
 
-    const jsonData = getJsonFromManifest(pathToManifest)
-    const updatedJsonData = await updateManifestVersion(jsonData);
+    const jsonData = getJsonFromManifest(pathToManifest);
+    const oldManifestVersion = jsonData.version;
+
+    const newManifestVersion = await updatedManifestVersion(oldManifestVersion);
+
+    jsonData.version = newManifestVersion;
+
     updateManifest(updatedJsonData);
   } catch (error) {
     core.error(error.message);
@@ -22,14 +29,14 @@ function getJsonFromManifest(pathToManifest){
   return JSON.parse(rawData);
 }
 
-async function updateManifestVersion(jsonData){
+async function updatedManifestVersion(version){
   const labels = await getLabels();
 
-  const versionNumbers  = jsonData.version.match(/\d/g);
+  const versionNumbers  = version.match(/\d/g);
   for(let i = 0; i < versionNumbers.length; i++){
     versionNumbers[i] = Number.parseInt(versionNumbers[i]);
   }
-  
+
   for(const label of labels){
     core.debug(label);
     if(label == "release:major"){
@@ -45,10 +52,9 @@ async function updateManifestVersion(jsonData){
   }
 
   const versionString = `${versionNumbers[0]}.${versionNumbers[1]}.${versionNumbers[2]}`;
-  jsonData.version = versionString;
 
   core.setOutput('version', versionString);
-  return jsonData;
+  return versionString;
 }
 
 async function getLabels(){
