@@ -43,6 +43,7 @@ async function updatedManifestVersion(version){
     versionNumbers[i] = Number.parseInt(versionNumbers[i]);
   }
 
+  let noRelease = false;
   for(const label of labels){
     core.debug(label);
     if(label == "release:major"){
@@ -55,7 +56,12 @@ async function updatedManifestVersion(version){
     else if(label == "release:patch"){
       versionNumbers[2]++;
     }
+    else if(label == "release:none"){
+      noRelease = true;
+    }
   }
+
+  core.setOutput('no-release', noRelease);
 
   const versionString = `${versionNumbers[0]}.${versionNumbers[1]}.${versionNumbers[2]}`;
 
