@@ -5,6 +5,12 @@ inputs:
     description: 'The path to the manifest file'
     default: 'src/manifestShared.json'
     required: true
+  new-verison:
+    description: 'New manifest version'
+    required: false
+  mode:
+    description: 'Can be get, set or ignored if you want to both get the file and set the new value'
+    required: false
 outputs:
   version:
     description: The bumped version

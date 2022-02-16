@@ -8,17 +8,23 @@ const path = require("path");
 async function main(){
   try {
     const pathToManifest = core.getInput('path-to-manifest', { required: true });
-    // const onlyGetVersion = core.getInput('only-get-version');
-    // const oldVersion = core.getInput('old-verison');
+    const mode = core.getInput('mode');
+    let newManifestVersion = core.getInput('new-verison');
 
     const jsonData = getJsonFromManifest(pathToManifest);
-    const oldManifestVersion = jsonData.version;
 
-    const newManifestVersion = await updatedManifestVersion(oldManifestVersion);
-
-    jsonData.version = newManifestVersion;
-
-    updateManifest(pathToManifest, jsonData);
+    if(mode != 'set'){
+      const oldManifestVersion = jsonData.version;
+      newManifestVersion = await updatedManifestVersion(oldManifestVersion);
+    }
+    
+    core.setOutput('version', newManifestVersion);
+    
+    if(mode != 'get'){
+      jsonData.version = newManifestVersion;
+      updateManifest(pathToManifest, jsonData);
+    }
+    
   } catch (error) {
     core.error(error.message);
   }
@@ -53,7 +59,6 @@ async function updatedManifestVersion(version){
 
   const versionString = `${versionNumbers[0]}.${versionNumbers[1]}.${versionNumbers[2]}`;
 
-  core.setOutput('version', versionString);
   return versionString;
 }
 
