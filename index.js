@@ -24,11 +24,11 @@ async function main(){
 
     if(mode == "GET_VERSION"){
       cur_ver = getVersion(pathToVersionFile);
-      new_ver = updateVersion(cur_ver);
+      new_ver = await updateVersion(cur_ver);
     }
     else if(mode == "BUMP_VERSION"){
       cur_ver = getVersion(pathToVersionFile);
-      new_ver = updateVersion(cur_ver);
+      new_ver = await updateVersion(cur_ver);
       updateVersionFile(pathToVersionFile, new_ver);
       was_bumped = cur_ver != new_ver;
     }
