@@ -43,7 +43,7 @@ async function main(){
     }
     
   } catch (error) {
-    core.error(error.message);
+    core.setFailed(error.message);
   }
   finally{
     core.setOutput("cur_version", cur_ver);
