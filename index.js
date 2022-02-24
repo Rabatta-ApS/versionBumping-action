@@ -4,38 +4,55 @@ const { Octokit } = require("@octokit/action");
 const fs = require("fs");
 const path = require("path");
 
+let cur_ver;
+let new_ver;
+let was_bumped;
 
 async function main(){
   try {
-    const pathToManifest = core.getInput('path-to-manifest', { required: true });
+    const pathToVersionFile = core.getInput('path-to-version-file', { required: true });
     const mode = core.getInput('mode');
-    let newManifestVersion = core.getInput('new-verison');
+    const newVersion= core.getInput('new-verison');
 
-    const jsonData = getJsonFromManifest(pathToManifest);
+    cur_ver = "";
+    new_ver = "";
+    was_bumped = false;
 
-    if(mode != 'set'){
-      const oldManifestVersion = jsonData.version;
-      newManifestVersion = await updatedManifestVersion(oldManifestVersion);
+    if(mode == "GET_VERSION"){
+      cur_ver = getVersion(pathToVersionFile);
+      new_ver = updateVersion(cur_ver);
     }
-    
-    core.setOutput('version', newManifestVersion);
-    
-    if(mode != 'get'){
-      jsonData.version = newManifestVersion;
-      updateManifest(pathToManifest, jsonData);
+    else if(mode == "BUMP_VERSION"){
+      cur_ver = getVersion(pathToVersionFile);
+      new_ver = updateVersion(cur_ver);
+      updateVersionFile(pathToVersionFile, new_ver);
+      was_bumped = cur_ver != new_ver;
+    }
+    else if(mode == "SET_VERSION"){
+      cur_ver = getVersion(pathToVersionFile);
+      new_ver = newVersion;
+      updateVersionFile(pathToVersionFile, new_ver);
+      was_bumped = cur_ver != new_ver;
+    }
+    else{
+      throw new Error("Mode not recognised");
     }
     
   } catch (error) {
     core.error(error.message);
   }
+  finally{
+    core.setOutput("cur_version", cur_ver);
+    core.setOutput("new_version", new_ver);
+    core.setOutput("was_bumped", was_bumped);
+  }
 }
 
-function getJsonFromManifest(pathToManifest){
-  const rawData = fs.readFileSync(path.resolve(pathToManifest));
-  return JSON.parse(rawData);
+function getVersion(pathToFile){
+  return fs.readFileSync(path.resolve(pathToFile), {encoding: 'utf8'});
 }
 
-async function updatedManifestVersion(version){
+async function updateVersion(version){
   const labels = await getLabels();
 
   const versionNumbers  = version.match(/\d/g);
@@ -43,7 +60,6 @@ async function updatedManifestVersion(version){
     versionNumbers[i] = Number.parseInt(versionNumbers[i]);
   }
 
-  let noRelease = false;
   for(const label of labels){
     core.debug(label);
     if(label == "release:major"){
@@ -59,12 +75,7 @@ async function updatedManifestVersion(version){
     else if(label == "release:patch"){
       versionNumbers[2]++;
     }
-    else if(label == "release:none"){
-      noRelease = true;
-    }
   }
-
-  core.setOutput('no-release', noRelease);
 
   const versionString = `${versionNumbers[0]}.${versionNumbers[1]}.${versionNumbers[2]}`;
 
@@ -84,9 +95,8 @@ async function getLabels(){
   return labels ? labels.map(label => label.name) : [];
 }
 
-function updateManifest(pathToManifest, jsonData){
-  const data = JSON.stringify(jsonData, null, 2);
-  fs.writeFileSync(path.resolve(pathToManifest), data);
+function updateVersionFile(pathToFile, newVersion){
+  fs.writeFileSync(path.resolve(pathToFile), newVersion);
 }
 
 main();
