@@ -18,6 +18,10 @@ async function main(){
     new_ver = "";
     was_bumped = false;
 
+    if(!process.env.GITHUB_TOKEN){
+      throw new Error("GITHUB_TOKEN env not set");
+    }
+
     if(mode == "GET_VERSION"){
       cur_ver = getVersion(pathToVersionFile);
       new_ver = updateVersion(cur_ver);
