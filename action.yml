@@ -1,19 +1,24 @@
 name: 'Chrome extension version bump'
-description: 'Update version number in manifest file '
+description: 'Update version number in version file '
 inputs:
-  path-to-manifest:
-    description: 'The path to the manifest file'
-    default: 'src/manifestShared.json'
+  path-to-version-file:
+    description: 'The path to the version file'
+    default: 'version.txt'
     required: true
   new-verison:
-    description: 'New manifest version'
+    description: 'Manually decide new version'
     required: false
   mode:
-    description: 'Can be get, set or ignored if you want to both get the file and set the new value'
-    required: false
+    description: 'Can be GET_VERSION, BUMP_VERSION, SET_VERSION'
+    required: true
+    default: 'BUMP_VERSION'
 outputs:
-  version:
-    description: The bumped version
+  cur_ver:
+    description: The current version
+  new_ver:
+    description: The new version
+  was_bumped: 
+    description: Whether the version was bumped or not
 runs:
   using: 'node16'
   main: 'index.js'
