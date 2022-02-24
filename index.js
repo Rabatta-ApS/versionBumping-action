@@ -24,7 +24,6 @@ async function main(){
 
     if(mode == "GET_VERSION"){
       cur_ver = getVersion(pathToVersionFile);
-      new_ver = await updateVersion(cur_ver);
     }
     else if(mode == "BUMP_VERSION"){
       cur_ver = getVersion(pathToVersionFile);
