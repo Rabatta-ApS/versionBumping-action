@@ -58,7 +58,7 @@ function getVersion(pathToFile){
 async function updateVersion(version){
   const labels = await getLabels();
 
-  const versionNumbers  = version.match(/\d/g);
+  const versionNumbers  = version.match(/\d*/g);
   for(let i = 0; i < versionNumbers.length; i++){
     versionNumbers[i] = Number.parseInt(versionNumbers[i]);
   }
